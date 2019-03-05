@@ -1,0 +1,13 @@
+<h2 id="Title">{{title}}</h2>
+<div id="clock" >
+{{time|date:'EEE, MMM d'}}
+{{time|date:'hh:mm a'}}
+</div>
+<mat-tab-group>
+    <mat-tab label="Reminder"> 
+        <app-reminder></app-reminder>
+    </mat-tab>
+    <mat-tab label="Goals">
+        <app-goal></app-goal>    
+    </mat-tab>
+</mat-tab-group>

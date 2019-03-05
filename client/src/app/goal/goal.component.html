@@ -1,0 +1,165 @@
+<div id="layout">
+  <div>
+    <button mat-button matSuffix mat-stroked-button (click)="toggle()">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+    <button mat-button matSuffix mat-stroked-button (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+  <form #filter_form="ngForm" *ngIf="isSelect" id="form">
+    <div>
+      <!-- <mat-form-field>
+      <input matInput placeholder="Id" #id name="id" [(ngModel)]="filter.id" (keyup.enter)="apply_filter(filter_form)">
+    </mat-form-field> -->
+      <mat-form-field>
+        <input type="text" matInput [matAutocomplete]="auto" placeholder="Category" name="category" [(ngModel)]="filter.category">
+      </mat-form-field>
+      <mat-autocomplete #auto="matAutocomplete" (keyup.enter)="apply_filter(filter_form)">
+        <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+      </mat-autocomplete>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Date" name="date" [(ngModel)]="filter.date" (dateChange)="apply_filter(filter_form)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <input placeholder="Activity" matInput name="desc" #desc [(ngModel)]="filter.desc" (keyup.enter)="apply_filter(filter_form)">
+      </mat-form-field>
+      <mat-form-field>
+        <select matNativeControl placeholder="status" name="status" #status [(ngModel)]="filter.status" (change)="apply_filter(filter_form)">
+          <option value="Not started">Not started</option>
+          <option value="In progress">In progress</option>
+          <option value="Done">Done</option>
+          <option value="Dropped">Dropped</option>
+          <option value="">All</option>
+        </select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Number of days" #threshold (keyup.enter)="set_threshold(threshold.value)">
+      </mat-form-field>
+    </div>
+
+  </form>
+
+  <table mat-table [dataSource]="schedule" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> No. </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <!-- Category Column -->
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef> Category </th>
+      <td mat-cell *matCellDef="let element"> {{element.category}} </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef> Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.date|date:'dd/MM/yyyy'}} </td>
+    </ng-container>
+
+    <!-- Desc Column -->
+    <ng-container matColumnDef="desc">
+      <th mat-header-cell *matHeaderCellDef> Goal Desc </th>
+      <td mat-cell *matCellDef="let element"> {{element.desc}} </td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    </ng-container>
+
+    <!-- Notes Column -->
+    <ng-container matColumnDef="comments">
+      <th mat-header-cell *matHeaderCellDef> Notes </th>
+      <td mat-cell *matCellDef="let element"> {{element.comments}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="notes">
+      <th mat-header-cell *matHeaderCellDef> Notes </th>
+      <td mat-cell *matCellDef="let element"> {{element.notes}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row (click)="onSelect(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <br />
+  <button mat-button matSuffix mat-stroked-button (click)="showForm()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-button matSuffix mat-stroked-button (click)="showTodo()">
+    <mat-icon>list</mat-icon>
+  </button>
+  <div>
+    <mat-form-field id="todo" *ngIf="isTodo">
+      <button mat-button matSuffix mat-stroked-button (click)="add_todo(todo_item.value)">
+        <mat-icon>add</mat-icon>
+      </button>
+      <!-- <textarea matInput placeholder="Add items here"></textarea> -->
+      <textarea matInput matTextareaAutosize matAutosizeMinRows=1 #todo_item></textarea>
+    </mat-form-field>
+  </div>
+  <form #form="ngForm" *ngIf="isNew" id="form">
+    <div>
+      <mat-form-field>
+        <input matInput placeholder="Id" #id name="id" [(ngModel)]="goal.id" [value]="goal.id">
+      </mat-form-field>
+      <mat-form-field>
+        <input type="text" matInput [matAutocomplete]="auto" placeholder="Category" name="category" [(ngModel)]="goal.category">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Date" name="date" [(ngModel)]="goal.date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <input placeholder="Activity" matInput name="desc" #desc [(ngModel)]="goal.desc" (keyup.enter)="addItem(form)">
+      </mat-form-field>
+      <mat-form-field>
+        <select matNativeControl placeholder="status" name="status" #status [(ngModel)]="goal.status">
+          <option value="Not started">Not started</option>
+          <option value="In progress">In progress</option>
+          <option value="Done">Done</option>
+          <option value="Dropped">Dropped</option>
+          <option value="">All</option>
+        </select>
+      </mat-form-field>
+      <div>
+        <mat-form-field>
+          <input placeholder="Notes" matInput name="comments" #comments [(ngModel)]="goal.comments" (keyup.enter)="addItem(form)">
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+  <div id="block_container">
+    <div id="table_control" *ngIf="selectedgoal">
+      <button mat-button matSuffix mat-stroked-button (click)="btn_done()">
+        <mat-icon>done</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button (click)="btn_del()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+    <!-- <div id="page_navigation">
+      <button mat-button matSuffix mat-stroked-button (click)="filter_by_date('backward')">
+        <mat-icon>skip_previous</mat-icon>
+      </button>
+      {{date|date:'EEE, MMM d'}}
+      <button mat-button matSuffix mat-stroked-button (click)="filter_by_date('forward')">
+        <mat-icon>skip_next</mat-icon>
+      </button>
+    </div> -->
+  </div>
+  <div>{{message}}</div>
+</div>

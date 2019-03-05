@@ -1,0 +1,51 @@
+#layout{
+  padding: 25px 50px;
+  overflow-y: scroll;
+}
+#date_picker {
+    float: right;
+}
+#time_picker {
+    margin-left: 200px;
+    float: justify;
+}
+#reminder_entry {
+    width: 500px;
+}
+#schedule_list {
+    float:left;
+    text-align: left;
+}
+#block_container {
+    width: auto;
+    height: auto;
+}
+#table_control{
+   float:left; 
+}
+#page_navigation{
+    
+    text-align: center;
+}
+#form{
+    text-align: center;
+}
+#todo{
+     text-align: center; 
+     height: auto;  
+     background:#fff;
+     height:auto; 
+     width:100%;
+}
+/* Styles for tab labels */
+table {
+  width: 100%;
+}
+
+.mat-row {
+  height: auto;
+}
+
+.mat-cell {
+  padding: 10px 10px 10px 0;
+}
